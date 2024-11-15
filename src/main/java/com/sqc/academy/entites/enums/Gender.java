@@ -1,4 +1,4 @@
-package com.sqc.academy.entites;
+package com.sqc.academy.entites.enums;
 
 public enum Gender {
     Male,

@@ -1,9 +1,5 @@
 package com.sqc.academy.entites;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-
-import com.sqc.academy.entites.enums.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,14 +11,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
-public class Employee {
+public class Department {
     Long id;
     String name;
-    LocalDate dob;
-    Gender gender;
-    BigDecimal salary;
-
-    String phone;
-    Long departmentId;
-
 }
