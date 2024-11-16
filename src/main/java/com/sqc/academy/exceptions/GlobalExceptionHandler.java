@@ -1,6 +1,6 @@
 package com.sqc.academy.exceptions;
 
-import com.sqc.academy.dtos.ApiResponse;
+import com.sqc.academy.dtos.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;

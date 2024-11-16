@@ -1,6 +1,5 @@
-package com.sqc.academy.exceptions;
+package com.sqc.academy.dtos.response;
 
-import com.sqc.academy.dtos.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
