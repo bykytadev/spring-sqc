@@ -1,11 +1,11 @@
-package com.sqc.academy.services;
+package com.sqc.academy.services.employee;
 
 import java.util.List;
 import java.util.Optional;
 
 import com.sqc.academy.dtos.request.EmployeeSearchRequest;
 import com.sqc.academy.entites.Employee;
-import com.sqc.academy.repositories.EmployeeRepository;
+import com.sqc.academy.repositories.employee.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;

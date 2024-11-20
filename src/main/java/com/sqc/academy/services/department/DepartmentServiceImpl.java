@@ -1,10 +1,10 @@
-package com.sqc.academy.services;
+package com.sqc.academy.services.department;
 
 import java.util.List;
 import java.util.Optional;
 
 import com.sqc.academy.entites.Department;
-import com.sqc.academy.repositories.DepartmentRepository;
+import com.sqc.academy.repositories.department.DepartmentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;

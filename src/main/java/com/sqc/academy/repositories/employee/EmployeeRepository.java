@@ -1,4 +1,4 @@
-package com.sqc.academy.repositories;
+package com.sqc.academy.repositories.employee;
 
 import java.util.List;
 import java.util.Optional;

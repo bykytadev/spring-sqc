@@ -7,7 +7,7 @@ import com.sqc.academy.dtos.response.JsonResponse;
 import com.sqc.academy.entites.Department;
 import com.sqc.academy.exceptions.AppException;
 import com.sqc.academy.exceptions.ErrorCode;
-import com.sqc.academy.services.DepartmentService;
+import com.sqc.academy.services.department.DepartmentService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;

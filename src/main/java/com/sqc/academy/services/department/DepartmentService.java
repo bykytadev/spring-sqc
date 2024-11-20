@@ -1,4 +1,4 @@
-package com.sqc.academy.services;
+package com.sqc.academy.services.department;
 
 import java.util.List;
 import java.util.Optional;
