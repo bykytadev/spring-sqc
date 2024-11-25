@@ -1,16 +1,18 @@
 package com.sqc.academy.services.department;
 
 import java.util.List;
-import java.util.Optional;
 
-import com.sqc.academy.entites.Department;
+import com.sqc.academy.dtos.response.DepartmentResponse;
+import com.sqc.academy.entities.Department;
 
 public interface DepartmentService {
-    List<Department> findAll();
+    List<DepartmentResponse> findAll();
 
-    Optional<Department> findById(Long id);
+    DepartmentResponse findById(Long id);
 
-    Department save(Department department);
+    DepartmentResponse save(Department department);
+
+    DepartmentResponse update(Long id, Department department);
 
     void deleteById(Long id);
 }

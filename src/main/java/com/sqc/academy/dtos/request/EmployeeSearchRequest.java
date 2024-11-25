@@ -2,7 +2,7 @@ package com.sqc.academy.dtos.request;
 
 import java.time.LocalDate;
 
-import com.sqc.academy.entites.enums.Gender;
+import com.sqc.academy.entities.enums.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

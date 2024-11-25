@@ -3,36 +3,20 @@ CREATE DATABASE `sqc_management`;
 USE `sqc_management`;
 
 CREATE TABLE departments (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE employees (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     dob DATE NOT NULL,
     gender ENUM('Male', 'Female', 'Other') NOT NULL,
     salary DECIMAL(15, 2) NOT NULL,
     phone VARCHAR(15) NOT NULL,
-    department_id INT,
+    department_id BIGINT,
     FOREIGN KEY (department_id) REFERENCES departments(id)
 );
-
--- Create a trigger to set id if it is null
-DELIMITER //
-
-CREATE TRIGGER before_insert_employees
-BEFORE INSERT ON employees
-FOR EACH ROW
-BEGIN
-    IF NEW.id IS NULL THEN
-        SET NEW.id = (SELECT IFNULL(MAX(id), 0) + 1 FROM employees);
-    END IF;
-END;
-
-//
-
-DELIMITER ;
 
 INSERT INTO departments (id, name) VALUES
 (1, 'HR'),
@@ -40,7 +24,6 @@ INSERT INTO departments (id, name) VALUES
 (3, 'IT'),
 (4, 'Marketing'),
 (5, 'Sales');
-
 
 INSERT INTO employees (id, name, dob, gender, salary, phone, department_id) VALUES
 (1, 'Nguyen Van A', '2000-01-01', 'Male', 4500000.00, '0123456789', 1),

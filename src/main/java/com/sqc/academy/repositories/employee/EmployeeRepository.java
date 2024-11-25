@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.sqc.academy.dtos.request.EmployeeSearchRequest;
-import com.sqc.academy.entites.Employee;
+import com.sqc.academy.entities.Employee;
 
 public interface EmployeeRepository {
     List<Employee> findByAttributes(EmployeeSearchRequest request);

@@ -4,10 +4,9 @@ import java.util.List;
 
 import com.sqc.academy.dtos.request.EmployeeSearchRequest;
 import com.sqc.academy.dtos.response.ApiResponse;
+import com.sqc.academy.dtos.response.EmployeeResponse;
 import com.sqc.academy.dtos.response.JsonResponse;
-import com.sqc.academy.entites.Employee;
-import com.sqc.academy.exceptions.AppException;
-import com.sqc.academy.exceptions.ErrorCode;
+import com.sqc.academy.entities.Employee;
 import com.sqc.academy.services.employee.EmployeeService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -31,45 +30,30 @@ public class EmployeeController {
     EmployeeService employeeService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<Employee>>> getAllEmployees(EmployeeSearchRequest request) {
-        List<Employee> filteredEmployees = employeeService.findByAttributes(request);
-        return JsonResponse.ok(filteredEmployees);
+    public ResponseEntity<ApiResponse<List<EmployeeResponse>>> getAllEmployees(EmployeeSearchRequest request) {
+        return JsonResponse.ok(employeeService.findByAttributes(request));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Employee>> getEmployeeById(@PathVariable("id") Long id) {
-        return employeeService.findById(id)
-                .map(JsonResponse::ok)
-                .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_EXISTED));
+    public ResponseEntity<ApiResponse<EmployeeResponse>> getEmployeeById(@PathVariable("id") Long id) {
+        return JsonResponse.ok(employeeService.findById(id));
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Employee>> createEmployee(@RequestBody Employee employee) {
-        Employee createdEmployee = employeeService.save(employee);
-        return JsonResponse.created(createdEmployee);
+    public ResponseEntity<ApiResponse<EmployeeResponse>> createEmployee(@RequestBody Employee employee) {
+        return JsonResponse.created(employeeService.save(employee));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Employee>> updateEmployee(
+    public ResponseEntity<ApiResponse<EmployeeResponse>> updateEmployee(
             @PathVariable("id") Long id,
-            @RequestBody Employee updatedEmployee) {
-
-        return employeeService.findById(id)
-                .map(existingEmployee -> {
-                    updatedEmployee.setId(id);
-                    Employee employee = employeeService.save(updatedEmployee);
-                    return JsonResponse.ok(employee);
-                })
-                .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_EXISTED));
+            @RequestBody Employee employee) {
+        return JsonResponse.ok(employeeService.update(id, employee));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEmployee(@PathVariable("id") Long id) {
-        return employeeService.findById(id)
-                .map(existingEmployee -> {
-                    employeeService.deleteById(id);
-                    return JsonResponse.noContent();
-                })
-                .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_EXISTED));
+        employeeService.deleteById(id);
+        return JsonResponse.noContent();
     }
 }
