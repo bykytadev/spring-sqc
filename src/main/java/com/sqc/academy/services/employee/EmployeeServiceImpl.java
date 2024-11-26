@@ -3,6 +3,7 @@ package com.sqc.academy.services.employee;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.sqc.academy.dtos.request.EmployeeRequest;
 import com.sqc.academy.dtos.request.EmployeeSearchRequest;
 import com.sqc.academy.dtos.response.EmployeeResponse;
 import com.sqc.academy.entities.Department;
@@ -42,7 +43,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     @Transactional
-    public EmployeeResponse save(Employee employee) {
+    public EmployeeResponse save(EmployeeRequest employeeRequest) {
+        Employee employee = employeeMapper.toEntity(employeeRequest);
         validateAndSetDepartment(employee);
         Employee savedEmployee = employeeRepository.save(employee);
         return employeeMapper.toDTO(savedEmployee);
@@ -50,8 +52,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     @Transactional
-    public EmployeeResponse update(Long id, Employee employee) {
+    public EmployeeResponse update(Long id, EmployeeRequest employeeRequest) {
         findById(id);
+        Employee employee = employeeMapper.toEntity(employeeRequest);
         validateAndSetDepartment(employee);
         employee.setId(id);
         Employee updatedEmployee = employeeRepository.save(employee);
@@ -64,20 +67,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeRepository.deleteById(id);
     }
 
-    private void validateAndSetDepartment(Employee employee) {
-        Long departmentId = null;
-        if (employee.getDepartmentId() != null) {
-            departmentId = employee.getDepartmentId();
-        } else if (employee.getDepartment() != null && employee.getDepartment().getId() != null) {
-            departmentId = employee.getDepartment().getId();
+    void validateAndSetDepartment(Employee employee) {
+        if (employee.getDepartment() != null && employee.getDepartment().getId() != null) {
+            Department department = departmentRepository.findById(employee.getDepartment().getId())
+                    .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_EXISTED));
+            employee.setDepartment(department);
         }
-
-        if (departmentId == null) {
-            throw new AppException(ErrorCode.DEPARTMENT_NOT_EXISTED);
-        }
-
-        Department department = departmentRepository.findById(departmentId)
-                .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_EXISTED));
-        employee.setDepartment(department);
     }
 }

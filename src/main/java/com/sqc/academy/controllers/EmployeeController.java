@@ -2,11 +2,11 @@ package com.sqc.academy.controllers;
 
 import java.util.List;
 
+import com.sqc.academy.dtos.request.EmployeeRequest;
 import com.sqc.academy.dtos.request.EmployeeSearchRequest;
 import com.sqc.academy.dtos.response.ApiResponse;
 import com.sqc.academy.dtos.response.EmployeeResponse;
 import com.sqc.academy.dtos.response.JsonResponse;
-import com.sqc.academy.entities.Employee;
 import com.sqc.academy.services.employee.EmployeeService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -40,15 +40,15 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<EmployeeResponse>> createEmployee(@RequestBody Employee employee) {
-        return JsonResponse.created(employeeService.save(employee));
+    public ResponseEntity<ApiResponse<EmployeeResponse>> createEmployee(@RequestBody EmployeeRequest employeeRequest) {
+        return JsonResponse.created(employeeService.save(employeeRequest));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<EmployeeResponse>> updateEmployee(
             @PathVariable("id") Long id,
-            @RequestBody Employee employee) {
-        return JsonResponse.ok(employeeService.update(id, employee));
+            @RequestBody EmployeeRequest employeeRequest) {
+        return JsonResponse.ok(employeeService.update(id, employeeRequest));
     }
 
     @DeleteMapping("/{id}")
