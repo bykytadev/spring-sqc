@@ -1,17 +1,17 @@
 package com.sqc.academy.services.department;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.sqc.academy.dtos.response.DepartmentResponse;
 import com.sqc.academy.entities.Department;
 import com.sqc.academy.exceptions.AppException;
 import com.sqc.academy.exceptions.ErrorCode;
 import com.sqc.academy.mappers.DepartmentMapper;
-import com.sqc.academy.repositories.department.DepartmentRepository;
+import com.sqc.academy.repositories.DepartmentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,36 +22,61 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public List<DepartmentResponse> findAll() {
-        return departmentRepository.findAll()
-                .stream()
+        return departmentRepository.findAll().stream()
                 .map(departmentMapper::toDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
     public DepartmentResponse findById(Long id) {
-        Department department = departmentRepository.findById(id)
+        return departmentRepository.findById(id)
+                .map(departmentMapper::toDTO)
                 .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_EXISTED));
-        return departmentMapper.toDTO(department);
     }
 
     @Override
+    @Transactional
     public DepartmentResponse save(Department department) {
-        Department savedDepartment = departmentRepository.save(department);
-        return departmentMapper.toDTO(savedDepartment);
+        if (existsByName(department.getName())) {
+            throw new AppException(ErrorCode.DEPARTMENT_NAME_EXISTED);
+        }
+        return departmentMapper.toDTO(departmentRepository.save(department));
     }
 
     @Override
+    @Transactional
     public DepartmentResponse update(Long id, Department department) {
-        findById(id);
-        department.setId(id);
-        Department updatedDepartment = departmentRepository.save(department);
-        return departmentMapper.toDTO(updatedDepartment);
+        Department existingDepartment = departmentRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_EXISTED));
+
+        if (!existingDepartment.getName().equals(department.getName())
+                && existsByName(department.getName())) {
+            throw new AppException(ErrorCode.DEPARTMENT_NAME_EXISTED);
+        }
+
+        existingDepartment.setName(department.getName());
+        return departmentMapper.toDTO(departmentRepository.save(existingDepartment));
     }
 
     @Override
+    @Transactional
     public void deleteById(Long id) {
-        findById(id);
+        if (!departmentRepository.existsById(id)) {
+            throw new AppException(ErrorCode.DEPARTMENT_NOT_EXISTED);
+        }
         departmentRepository.deleteById(id);
+    }
+
+    @Override
+    public boolean existsByName(String name) {
+        return departmentRepository.existsByName(name);
+    }
+
+    @Override
+    public long countEmployees(Long departmentId) {
+        if (!departmentRepository.existsById(departmentId)) {
+            throw new AppException(ErrorCode.DEPARTMENT_NOT_EXISTED);
+        }
+        return 0L; // Implement actual count logic
     }
 }

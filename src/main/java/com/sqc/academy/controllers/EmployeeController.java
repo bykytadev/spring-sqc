@@ -1,16 +1,18 @@
 package com.sqc.academy.controllers;
 
-import java.util.List;
-
+import com.sqc.academy.dtos.request.EmployeeRequest;
 import com.sqc.academy.dtos.request.EmployeeSearchRequest;
 import com.sqc.academy.dtos.response.ApiResponse;
 import com.sqc.academy.dtos.response.EmployeeResponse;
 import com.sqc.academy.dtos.response.JsonResponse;
-import com.sqc.academy.entities.Employee;
 import com.sqc.academy.services.employee.EmployeeService;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,8 +32,10 @@ public class EmployeeController {
     EmployeeService employeeService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<EmployeeResponse>>> getAllEmployees(EmployeeSearchRequest request) {
-        return JsonResponse.ok(employeeService.findByAttributes(request));
+    public ResponseEntity<ApiResponse<Page<EmployeeResponse>>> getAllEmployees(
+            EmployeeSearchRequest request,
+            @PageableDefault(page = 0, size = 5, sort = "id") Pageable pageable) {
+        return JsonResponse.ok(employeeService.findByAttributes(request, pageable));
     }
 
     @GetMapping("/{id}")
@@ -40,15 +44,15 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<EmployeeResponse>> createEmployee(@RequestBody Employee employee) {
-        return JsonResponse.created(employeeService.save(employee));
+    public ResponseEntity<ApiResponse<EmployeeResponse>> createEmployee(@Valid @RequestBody EmployeeRequest employeeRequest) {
+        return JsonResponse.created(employeeService.save(employeeRequest));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<EmployeeResponse>> updateEmployee(
             @PathVariable("id") Long id,
-            @RequestBody Employee employee) {
-        return JsonResponse.ok(employeeService.update(id, employee));
+            @Valid @RequestBody EmployeeRequest employeeRequest) {
+        return JsonResponse.ok(employeeService.update(id, employeeRequest));
     }
 
     @DeleteMapping("/{id}")

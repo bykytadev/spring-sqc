@@ -13,7 +13,8 @@ public enum ErrorCode {
     EMPLOYEE_NOT_EXISTED(5001, "Employee is not existed", HttpStatus.NOT_FOUND),
 
 
-    DEPARTMENT_NOT_EXISTED(6001, "Department is not existed", HttpStatus.NOT_FOUND);
+    DEPARTMENT_NOT_EXISTED(6001, "Department is not existed", HttpStatus.NOT_FOUND),
+    DEPARTMENT_NAME_EXISTED(6002, "Department name already exists", HttpStatus.CONFLICT);
 
     int code;
     String message;
