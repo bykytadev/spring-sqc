@@ -25,6 +25,9 @@ dependencies {
     runtimeOnly("com.mysql:mysql-connector-j")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
+    implementation("org.flywaydb:flyway-core:11.0.0")
+    implementation("org.flywaydb:flyway-mysql:11.0.0")
+
     implementation("org.mapstruct:mapstruct:1.6.3")
     annotationProcessor("org.mapstruct:mapstruct-processor:1.6.3")
 

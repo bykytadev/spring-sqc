@@ -1,23 +1,3 @@
-DROP DATABASE IF EXISTS `sqc_management`;
-CREATE DATABASE `sqc_management`;
-USE `sqc_management`;
-
-CREATE TABLE departments (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL
-);
-
-CREATE TABLE employees (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    dob DATE NOT NULL,
-    gender ENUM('Male', 'Female', 'Other') NOT NULL,
-    salary DECIMAL(15, 2) NOT NULL,
-    phone VARCHAR(15) NOT NULL,
-    department_id BIGINT,
-    FOREIGN KEY (department_id) REFERENCES departments(id)
-);
-
 INSERT INTO departments (id, name) VALUES
 (1, 'HR'),
 (2, 'Finance'),
