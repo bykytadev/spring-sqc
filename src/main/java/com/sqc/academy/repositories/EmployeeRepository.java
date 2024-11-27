@@ -4,15 +4,17 @@ import java.util.List;
 
 import com.sqc.academy.dtos.request.EmployeeSearchRequest;
 import com.sqc.academy.entities.Employee;
+import com.sqc.academy.specifications.EmployeeSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface EmployeeRepository extends JpaRepository<Employee, Long> {
+public interface EmployeeRepository extends JpaRepository<Employee, Long>, JpaSpecificationExecutor<Employee> {
 
     @Query("""
             SELECT e FROM Employee e
@@ -38,4 +40,8 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
     @Query("SELECT e FROM Employee e WHERE e.department.id = :departmentId")
     List<Employee> findByDepartmentId(@Param("departmentId") Long departmentId);
+
+    default Page<Employee> findByAttributesV2(EmployeeSearchRequest request, Pageable pageable) {
+        return findAll(EmployeeSpecification.getEmployees(request), pageable);
+    }
 }

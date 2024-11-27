@@ -10,12 +10,14 @@ import com.sqc.academy.mappers.DepartmentMapper;
 import com.sqc.academy.repositories.DepartmentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
+@Slf4j
 public class DepartmentServiceImpl implements DepartmentService {
     DepartmentRepository departmentRepository;
     DepartmentMapper departmentMapper;
@@ -29,6 +31,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public DepartmentResponse findById(Long id) {
+        log.info("Find department by id: {}", id);
         return departmentRepository.findById(id)
                 .map(departmentMapper::toDTO)
                 .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_EXISTED));
@@ -70,13 +73,5 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public boolean existsByName(String name) {
         return departmentRepository.existsByName(name);
-    }
-
-    @Override
-    public long countEmployees(Long departmentId) {
-        if (!departmentRepository.existsById(departmentId)) {
-            throw new AppException(ErrorCode.DEPARTMENT_NOT_EXISTED);
-        }
-        return 0L; // Implement actual count logic
     }
 }

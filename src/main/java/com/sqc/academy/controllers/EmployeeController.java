@@ -61,4 +61,11 @@ public class EmployeeController {
         employeeService.deleteById(id);
         return JsonResponse.noContent();
     }
+
+    @GetMapping("/v2")
+    public ResponseEntity<ApiResponse<PageResponse<EmployeeResponse>>> getAllEmployeesV2(
+            EmployeeSearchRequest request,
+            @PageableDefault(page = 0, size = 5, sort = "id") Pageable pageable) {
+        return JsonResponse.ok(employeeService.findByAttributesV2(request, pageable));
+    }
 }

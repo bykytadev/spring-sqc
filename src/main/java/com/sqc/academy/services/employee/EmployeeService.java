@@ -16,4 +16,6 @@ public interface EmployeeService {
     EmployeeResponse update(Long id, EmployeeRequest employee);
 
     void deleteById(Long id);
+
+    PageResponse<EmployeeResponse> findByAttributesV2(EmployeeSearchRequest request, Pageable pageable);
 }

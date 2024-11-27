@@ -17,6 +17,4 @@ public interface DepartmentService {
     void deleteById(Long id);
 
     boolean existsByName(String name);
-
-    long countEmployees(Long departmentId);
 }

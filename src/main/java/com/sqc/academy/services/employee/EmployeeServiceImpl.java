@@ -13,6 +13,7 @@ import com.sqc.academy.repositories.DepartmentRepository;
 import com.sqc.academy.repositories.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
+@Slf4j
 public class EmployeeServiceImpl implements EmployeeService {
     EmployeeRepository employeeRepository;
     DepartmentRepository departmentRepository;
@@ -30,6 +32,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public PageResponse<EmployeeResponse> findByAttributes(EmployeeSearchRequest request, Pageable pageable) {
         Page<EmployeeResponse> page = employeeRepository.findByAttributes(request, pageable)
                 .map(employeeMapper::toDTO);
+                log.info("Ai đó đã gọi hàm này ^_^");
         return PageResponse.from(page);
     }
 
@@ -78,5 +81,12 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new AppException(ErrorCode.EMPLOYEE_NOT_EXISTED);
         }
         employeeRepository.deleteById(id);
+    }
+
+    @Override
+    public PageResponse<EmployeeResponse> findByAttributesV2(EmployeeSearchRequest request, Pageable pageable) {
+        Page<EmployeeResponse> page = employeeRepository.findByAttributesV2(request, pageable)
+                .map(employeeMapper::toDTO);
+        return PageResponse.from(page);
     }
 }
