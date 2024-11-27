@@ -3,6 +3,7 @@ package com.sqc.academy.services.employee;
 import com.sqc.academy.dtos.request.EmployeeRequest;
 import com.sqc.academy.dtos.request.EmployeeSearchRequest;
 import com.sqc.academy.dtos.response.EmployeeResponse;
+import com.sqc.academy.dtos.response.PageResponse;
 import com.sqc.academy.entities.Department;
 import com.sqc.academy.entities.Employee;
 import com.sqc.academy.exceptions.AppException;
@@ -26,9 +27,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     EmployeeMapper employeeMapper;
 
     @Override
-    public Page<EmployeeResponse> findByAttributes(EmployeeSearchRequest request, Pageable pageable) {
-        return employeeRepository.findByAttributes(request, pageable)
+    public PageResponse<EmployeeResponse> findByAttributes(EmployeeSearchRequest request, Pageable pageable) {
+        Page<EmployeeResponse> page = employeeRepository.findByAttributes(request, pageable)
                 .map(employeeMapper::toDTO);
+        return PageResponse.from(page);
     }
 
     @Override

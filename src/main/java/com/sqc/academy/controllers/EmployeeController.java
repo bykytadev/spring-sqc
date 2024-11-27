@@ -5,12 +5,12 @@ import com.sqc.academy.dtos.request.EmployeeSearchRequest;
 import com.sqc.academy.dtos.response.ApiResponse;
 import com.sqc.academy.dtos.response.EmployeeResponse;
 import com.sqc.academy.dtos.response.JsonResponse;
+import com.sqc.academy.dtos.response.PageResponse;
 import com.sqc.academy.services.employee.EmployeeService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +32,7 @@ public class EmployeeController {
     EmployeeService employeeService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<EmployeeResponse>>> getAllEmployees(
+    public ResponseEntity<ApiResponse<PageResponse<EmployeeResponse>>> getAllEmployees(
             EmployeeSearchRequest request,
             @PageableDefault(page = 0, size = 5, sort = "id") Pageable pageable) {
         return JsonResponse.ok(employeeService.findByAttributes(request, pageable));
@@ -44,7 +44,8 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<EmployeeResponse>> createEmployee(@Valid @RequestBody EmployeeRequest employeeRequest) {
+    public ResponseEntity<ApiResponse<EmployeeResponse>> createEmployee(
+            @Valid @RequestBody EmployeeRequest employeeRequest) {
         return JsonResponse.created(employeeService.save(employeeRequest));
     }
 
