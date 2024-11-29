@@ -1,5 +1,7 @@
 package com.sqc.academy.services.employee;
 
+import java.util.Locale;
+
 import com.sqc.academy.dtos.request.EmployeeRequest;
 import com.sqc.academy.dtos.request.EmployeeSearchRequest;
 import com.sqc.academy.dtos.response.EmployeeResponse;
@@ -32,22 +34,30 @@ public class EmployeeServiceImpl implements EmployeeService {
     public PageResponse<EmployeeResponse> findByAttributes(EmployeeSearchRequest request, Pageable pageable) {
         Page<EmployeeResponse> page = employeeRepository.findByAttributes(request, pageable)
                 .map(employeeMapper::toDTO);
-                log.info("Ai đó đã gọi hàm này ^_^");
+        log.info("Ai đó đã gọi hàm này ^_^");
         return PageResponse.from(page);
     }
 
     @Override
-    public EmployeeResponse findById(Long id) {
+    public EmployeeResponse findById(Long id, Locale locale) {
+
+        log.info("Finding employee by id: {}", id);
+
+        Locale effectiveLocale = getEffectiveLocale(locale);
+
         return employeeRepository.findById(id)
                 .map(employeeMapper::toDTO)
-                .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_EXISTED, effectiveLocale));
     }
 
     @Override
     @Transactional
-    public EmployeeResponse save(EmployeeRequest employeeRequest) {
+    public EmployeeResponse save(EmployeeRequest employeeRequest, Locale locale) {
+
+        Locale effectiveLocale = getEffectiveLocale(locale);
+
         Department department = departmentRepository.findById(employeeRequest.getDepartmentId())
-                .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_EXISTED, effectiveLocale));
 
         Employee employee = employeeMapper.toEntity(employeeRequest);
         employee.setDepartment(department);
@@ -57,12 +67,15 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     @Transactional
-    public EmployeeResponse update(Long id, EmployeeRequest employeeRequest) {
+    public EmployeeResponse update(Long id, EmployeeRequest employeeRequest, Locale locale) {
+
+        Locale effectiveLocale = getEffectiveLocale(locale);
+
         Employee existingEmployee = employeeRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_EXISTED, effectiveLocale));
 
         Department department = departmentRepository.findById(employeeRequest.getDepartmentId())
-                .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_EXISTED, effectiveLocale));
 
         existingEmployee.setName(employeeRequest.getName());
         existingEmployee.setPhone(employeeRequest.getPhone());
@@ -76,9 +89,14 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     @Transactional
-    public void deleteById(Long id) {
+    public void deleteById(Long id, Locale locale) {
+
+        log.info("Deleting employee by id: {}", id);
+
+        Locale effectiveLocale = getEffectiveLocale(locale);
+
         if (!employeeRepository.existsById(id)) {
-            throw new AppException(ErrorCode.EMPLOYEE_NOT_EXISTED);
+            throw new AppException(ErrorCode.EMPLOYEE_NOT_EXISTED, effectiveLocale);
         }
         employeeRepository.deleteById(id);
     }
@@ -88,5 +106,13 @@ public class EmployeeServiceImpl implements EmployeeService {
         Page<EmployeeResponse> page = employeeRepository.findByAttributesV2(request, pageable)
                 .map(employeeMapper::toDTO);
         return PageResponse.from(page);
+    }
+
+    private Locale getEffectiveLocale(Locale locale) {
+        if (locale == null) {
+            log.warn("Locale is null, defaulting to Locale.ENGLISH");
+            return Locale.ENGLISH;
+        }
+        return locale;
     }
 }

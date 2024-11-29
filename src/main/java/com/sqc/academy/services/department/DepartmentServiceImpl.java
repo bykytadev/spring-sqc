@@ -1,7 +1,9 @@
 package com.sqc.academy.services.department;
 
 import java.util.List;
+import java.util.Locale;
 
+import com.sqc.academy.dtos.request.DepartmentRequest;
 import com.sqc.academy.dtos.response.DepartmentResponse;
 import com.sqc.academy.entities.Department;
 import com.sqc.academy.exceptions.AppException;
@@ -30,42 +32,59 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public DepartmentResponse findById(Long id) {
+    public DepartmentResponse findById(Long id, Locale locale) {
+
         log.info("Find department by id: {}", id);
+
+        Locale effectiveLocale = getEffectiveLocale(locale);
+
         return departmentRepository.findById(id)
                 .map(departmentMapper::toDTO)
-                .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_EXISTED, effectiveLocale));
     }
 
     @Override
     @Transactional
-    public DepartmentResponse save(Department department) {
-        if (existsByName(department.getName())) {
-            throw new AppException(ErrorCode.DEPARTMENT_NAME_EXISTED);
+    public DepartmentResponse save(DepartmentRequest departmentRequest, Locale locale) {
+
+        Locale effectiveLocale = getEffectiveLocale(locale);
+
+        if (existsByName(departmentRequest.getName())) {
+            throw new AppException(ErrorCode.DEPARTMENT_NAME_EXISTED, effectiveLocale);
         }
+
+        Department department = departmentMapper.toEntity(departmentRequest);
         return departmentMapper.toDTO(departmentRepository.save(department));
     }
 
     @Override
     @Transactional
-    public DepartmentResponse update(Long id, Department department) {
-        Department existingDepartment = departmentRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_EXISTED));
+    public DepartmentResponse update(Long id, DepartmentRequest departmentRequest, Locale locale) {
 
-        if (!existingDepartment.getName().equals(department.getName())
-                && existsByName(department.getName())) {
-            throw new AppException(ErrorCode.DEPARTMENT_NAME_EXISTED);
+        Locale effectiveLocale = getEffectiveLocale(locale);
+
+        Department existingDepartment = departmentRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_EXISTED, effectiveLocale));
+
+        if (!existingDepartment.getName().equals(departmentRequest.getName())
+                && existsByName(departmentRequest.getName())) {
+            throw new AppException(ErrorCode.DEPARTMENT_NAME_EXISTED, effectiveLocale);
         }
 
-        existingDepartment.setName(department.getName());
+        existingDepartment.setName(departmentRequest.getName());
         return departmentMapper.toDTO(departmentRepository.save(existingDepartment));
     }
 
     @Override
     @Transactional
-    public void deleteById(Long id) {
+    public void deleteById(Long id, Locale locale) {
+
+        log.info("Deleting department by id: {}", id);
+
+        Locale effectiveLocale = getEffectiveLocale(locale);
+
         if (!departmentRepository.existsById(id)) {
-            throw new AppException(ErrorCode.DEPARTMENT_NOT_EXISTED);
+            throw new AppException(ErrorCode.DEPARTMENT_NOT_EXISTED, effectiveLocale);
         }
         departmentRepository.deleteById(id);
     }
@@ -73,5 +92,13 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public boolean existsByName(String name) {
         return departmentRepository.existsByName(name);
+    }
+
+    private Locale getEffectiveLocale(Locale locale) {
+        if (locale == null) {
+            log.warn("Locale is null, defaulting to Locale.ENGLISH");
+            return Locale.ENGLISH;
+        }
+        return locale;
     }
 }

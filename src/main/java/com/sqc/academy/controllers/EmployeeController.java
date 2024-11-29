@@ -1,5 +1,7 @@
 package com.sqc.academy.controllers;
 
+import java.util.Locale;
+
 import com.sqc.academy.dtos.request.EmployeeRequest;
 import com.sqc.academy.dtos.request.EmployeeSearchRequest;
 import com.sqc.academy.dtos.response.ApiResponse;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -39,26 +42,32 @@ public class EmployeeController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<EmployeeResponse>> getEmployeeById(@PathVariable("id") Long id) {
-        return JsonResponse.ok(employeeService.findById(id));
+    public ResponseEntity<ApiResponse<EmployeeResponse>> getEmployeeById(
+            @PathVariable("id") Long id,
+            @RequestHeader(name = "Accept-Language", required = false) Locale locale) {
+        return JsonResponse.ok(employeeService.findById(id, locale));
     }
 
     @PostMapping
     public ResponseEntity<ApiResponse<EmployeeResponse>> createEmployee(
-            @Valid @RequestBody EmployeeRequest employeeRequest) {
-        return JsonResponse.created(employeeService.save(employeeRequest));
+            @Valid @RequestBody EmployeeRequest employeeRequest,
+            @RequestHeader(name = "Accept-Language", required = false) Locale locale) {
+        return JsonResponse.created(employeeService.save(employeeRequest, locale));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<EmployeeResponse>> updateEmployee(
             @PathVariable("id") Long id,
-            @Valid @RequestBody EmployeeRequest employeeRequest) {
-        return JsonResponse.ok(employeeService.update(id, employeeRequest));
+            @Valid @RequestBody EmployeeRequest employeeRequest,
+            @RequestHeader(name = "Accept-Language", required = false) Locale locale) {
+        return JsonResponse.ok(employeeService.update(id, employeeRequest, locale));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteEmployee(@PathVariable("id") Long id) {
-        employeeService.deleteById(id);
+    public ResponseEntity<Void> deleteEmployee(
+            @PathVariable("id") Long id,
+            @RequestHeader(name = "Accept-Language", required = false) Locale locale) {
+        employeeService.deleteById(id, locale);
         return JsonResponse.noContent();
     }
 
